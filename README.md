@@ -1,6 +1,6 @@
 # Toodlo.ai
 
-A RESTful Todo application built with FastAPI, developed while learning and exploring backend development.
+A RESTful Todo application built with FastAPI backend framework. It is consisting of certain features mentioned below.
 
 ## Tech Stack
 
@@ -9,6 +9,8 @@ A RESTful Todo application built with FastAPI, developed while learning and expl
 - Pydantic
 - Uvicorn
 - uv
+- PostgreSQL
+- SQLAlchemy
 
 ## Features
 
@@ -18,16 +20,23 @@ A RESTful Todo application built with FastAPI, developed while learning and expl
 - Delete Todo
 - Query Parameters
 - Request Validation
+- Restrictions & constraints
 
 ## API Endpoints
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | GET | `/` | Check API status |
-| GET | `/todos` | Retrieve todos |
-| POST | `/todos` | Create a todo |
-| PUT | `/todos/{id}` | Update a todo |
-| DELETE | `/todos/{id}` | Delete a todo |
+| GET | `/Toodlo.ai/login` | Login to Toodlo.ai |
+| POST | `/Toodlo.ai/login` | Submit username & Password for Login |
+| POST | `/Toodlo.ai/register` | Register if new user |
+| GET | `/Toodlo.ai/Home` | Home page |
+| POST | `/Toodlo.ai/Home/Todo` | Create a Todo |
+| GET | `/Toodlo.ai/Home/Todo` | Get the TODOS |
+| PUT | `/Toodlo.ai/Home/Todo/{id}` | Update the Todo in todolist |
+| DELETE | `/Toodlo.ai/Home/Todo/{id}` | Delete the Todo in todolist |
+
+
 
 ## Project Structure
 
