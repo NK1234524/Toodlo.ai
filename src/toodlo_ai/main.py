@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from enum import Enum
-from pydantic import BaseModel
+from pydantic import BaseModel,Field
 from fastapi import Query
 from typing import Annotated
 
@@ -8,6 +8,7 @@ app = FastAPI()
 
 class UserDetails(BaseModel):
     User:str
+    
 
 class Priority(str,Enum):
     low = "low"
@@ -20,40 +21,48 @@ class Status(str,Enum):
     completed = "completed"
 
 class TODO(BaseModel):
-    title:str
+    title:str=Field(min_length=3,max_length=100)
     status:Status
     priority:Priority
 
-# Root desitnation
+# Temporary page 
 @app.get("/")
 def root():
-    return {"message":"Welcome to the Todo list"}
+    return{"Welocme"}
+# Login page desitnation
+@app.get("/Toodlo.ai/login")
+def login():
+    return {"message":"Welcome Login page"}
+
+# Login page credentials submission
+@app.post("/Toodlo.ai/login")
+def login(username:str,password:str):
+    return {"message":"Login Successful"}
 
 users = []
-# Create a user 
-@app.post("/todo/createuser")
-def CreateUser(user:UserDetails):
+
+# Register to toodolio.ai 
+@app.post("/Toodlo.ai/register")
+def Register(user:UserDetails):
     users.append(user)
-# To see the users
-@app.get("/User") 
-async def User_info():
-    return users
+
+# Dashboard page
+
+# Home page
+@app.get("/Toodlo.ai/Home")
+def Home():
+    return{"Message":"Welcome to the Toodlo.ai home page"}
 
 todos = []
+
 # Create a Todo 
-@app.post("/todo/createtodo")
+@app.post("/Toodlo.ai/Home/Todo")
 def CreateTodo(todo:TODO):
     todos.append(todo)
 
-
-# To get todo through query. 
-# Now here TODO is the object present here so title is used also 
-# Here to make it case sensitive we used below code  
-# Annotations are used to handle the query.
-# Here we are using Query() method bcz here we need to validate the query.
-
-@app.get("/todo")
-def get_todo(q:Annotated[str | None, Query(min_length=2,max_length=50)]= None ):
+# Get the Todos
+@app.get("/Toodlo.ai/Home/Todo")
+async def get_todo(q:Annotated[str | None, Query(min_length=2,max_length=50)]= None ):
     if q is None:
         return todos
     Filter_Todo = []
@@ -64,7 +73,18 @@ def get_todo(q:Annotated[str | None, Query(min_length=2,max_length=50)]= None ):
          
          Filter_Todo.append(todo)
     return Filter_Todo
+
+# Update Todo
+@app.put("/Toodlo.ai/Home/Todo/{id}")
+async def Update_Todo(id:int, todo:TODO): 
+    todos[id]=todo
     
+
+# Delete Todo
+@app.delete("/Toodlo.ai/Home/Todo/{id}")
+async def Delete_Todo(id:int):
+    todos.pop(id)
+   
 
 
 
