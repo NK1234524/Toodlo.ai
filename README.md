@@ -11,6 +11,7 @@ A RESTful Todo application built with FastAPI backend framework. It is consistin
 - uv
 - PostgreSQL
 - SQLAlchemy
+- psycopg
 
 ## Features
 
@@ -42,7 +43,8 @@ A RESTful Todo application built with FastAPI backend framework. It is consistin
 
 ```text
 Toodlo.ai/
-├── main.py
+ ├── main.py
+ ├── database.py
 ├── pyproject.toml
 ├── uv.lock
 ├── README.md
