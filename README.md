@@ -44,10 +44,12 @@ A RESTful Todo application built with FastAPI backend framework. It is consistin
 ## Project Structure
 
 ```text
-Toodlo.ai/src/toodlo_ai
- ├── main.py
- ├── database.py
- ├── models.py
+Toodlo.ai
+ ├── src
+        ├── toodlo_ai
+                    ├── main.py
+                    ├── database.py
+                    ├── models.py 
 ├── pyproject.toml
 ├── uv.lock
 ├── README.md
