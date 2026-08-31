@@ -45,7 +45,7 @@ A RESTful Todo application built with FastAPI backend framework. It is consistin
 
 ```text
 Toodlo.ai
- ├── src
+    ├── src
         ├── toodlo_ai
                     ├── main.py
                     ├── database.py
