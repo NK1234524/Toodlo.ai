@@ -12,6 +12,8 @@ A RESTful Todo application built with FastAPI backend framework. It is consistin
 - PostgreSQL
 - SQLAlchemy
 - psycopg
+- ORM(Object Relational Mapping)
+- Sessionmaker
 
 ## Features
 
