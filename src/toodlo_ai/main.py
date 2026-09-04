@@ -3,6 +3,13 @@ from enum import Enum
 from pydantic import BaseModel,Field
 from fastapi import Query
 from typing import Annotated
+from .Db.database import Base,engine
+from .Db import models
+from sqlalchemy.orm import Session
+from fastapi import Depends
+from .Db.database import get_db
+
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI() 
 
@@ -24,6 +31,7 @@ class TODO(BaseModel):
     title:str=Field(min_length=3,max_length=100)
     status:Status
     priority:Priority
+    description:str
 
 # Temporary page 
 @app.get("/")
@@ -57,8 +65,19 @@ todos = []
 
 # Create a Todo 
 @app.post("/Toodlo.ai/Home/Todo")
-def CreateTodo(todo:TODO):
-    todos.append(todo)
+def CreateTodo(todo:TODO,db:Session = Depends(get_db)):
+    new_todo=models.Todo(
+        title = todo.title,
+        priority = todo.priority,
+        status = todo.status,
+        description=todo.description
+    )
+
+    db.add(new_todo)
+    db.commit()
+    db.refresh(new_todo)
+
+    return new_todo
 
 # Get the Todos
 @app.get("/Toodlo.ai/Home/Todo")
