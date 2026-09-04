@@ -8,6 +8,7 @@ from .Db import models
 from sqlalchemy.orm import Session
 from fastapi import Depends
 from .Db.database import get_db
+from sqlalchemy import or_
 
 Base.metadata.create_all(bind=engine)
 
@@ -61,7 +62,8 @@ def Register(user:UserDetails):
 def Home():
     return{"Message":"Welcome to the Toodlo.ai home page"}
 
-todos = []
+
+
 
 # Create a Todo 
 @app.post("/Toodlo.ai/Home/Todo")
@@ -79,19 +81,25 @@ def CreateTodo(todo:TODO,db:Session = Depends(get_db)):
 
     return new_todo
 
+
+
+
 # Get the Todos
 @app.get("/Toodlo.ai/Home/Todo")
-async def get_todo(q:Annotated[str | None, Query(min_length=2,max_length=50)]= None ):
+async def get_todo(q:Annotated[str | None, Query(min_length=2,max_length=50)]= None,db:Session=Depends(get_db) ):
     if q is None:
-        return todos
-    Filter_Todo = []
-    for todo in todos:
-        if (q.lower() in todo.title.lower() or 
-            q.lower() in todo.status.lower() or
-            q.lower() in todo.priority.lower()):
-         
-         Filter_Todo.append(todo)
-    return Filter_Todo
+        return db.query(models.Todo).all()
+
+    return db.query(models.Todo).filter(
+            or_(
+                models.Todo.title.ilike(f"%{q}%"),
+                models.Todo.status.ilike(f"%{q}%"),
+                models.Todo.priority.ilike(f"%{q}%"),
+            )
+        ).all()
+   
+
+
 
 # Update Todo
 @app.put("/Toodlo.ai/Home/Todo/{id}")
