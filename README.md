@@ -48,8 +48,9 @@ Toodlo.ai
     ├── src
         ├── toodlo_ai
                     ├── main.py
-                    ├── database.py
-                    ├── models.py 
+                    ├── Db
+                        ├── database.py
+                        ├── models.py
 ├── pyproject.toml
 ├── uv.lock
 ├── README.md
