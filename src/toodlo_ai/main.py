@@ -9,6 +9,9 @@ from sqlalchemy.orm import Session
 from fastapi import Depends
 from .Db.database import get_db
 from sqlalchemy import or_
+from fastapi import HTTPException
+from datetime import datetime ,timezone
+
 
 Base.metadata.create_all(bind=engine)
 
@@ -34,40 +37,28 @@ class TODO(BaseModel):
     priority:Priority
     description:str
 
-# Temporary page 
+class TODOResponse(BaseModel):
+    id : int
+    title : str
+    description : str
+    completed : bool
+    priority : Priority
+    status  : Status
+    created_at : datetime
+    notes : str | None
+
+
+#root
 @app.get("/")
 def root():
-    return{"Welocme"}
-# Login page desitnation
-@app.get("/Toodlo.ai/login")
-def login():
-    return {"message":"Welcome Login page"}
-
-# Login page credentials submission
-@app.post("/Toodlo.ai/login")
-def login(username:str,password:str):
-    return {"message":"Login Successful"}
-
-users = []
-
-# Register to toodolio.ai 
-@app.post("/Toodlo.ai/register")
-def Register(user:UserDetails):
-    users.append(user)
-
-# Dashboard page
-
-# Home page
-@app.get("/Toodlo.ai/Home")
-def Home():
-    return{"Message":"Welcome to the Toodlo.ai home page"}
+    return("Welcome to root page")
 
 
 
 
 # Create a Todo 
-@app.post("/Toodlo.ai/Home/Todo")
-def CreateTodo(todo:TODO,db:Session = Depends(get_db)):
+@app.post("/Toodlo.ai/Home/Todo",response_model=TODOResponse)
+async def CreateTodo(todo:TODO,db:Session = Depends(get_db)):
     new_todo=models.Todo(
         title = todo.title,
         priority = todo.priority,
@@ -85,7 +76,7 @@ def CreateTodo(todo:TODO,db:Session = Depends(get_db)):
 
 
 # Get the Todos
-@app.get("/Toodlo.ai/Home/Todo")
+@app.get("/Toodlo.ai/Home/Todo",response_model=list[TODOResponse])
 async def get_todo(q:Annotated[str | None, Query(min_length=2,max_length=50)]= None,db:Session=Depends(get_db) ):
     if q is None:
         return db.query(models.Todo).all()
@@ -101,17 +92,46 @@ async def get_todo(q:Annotated[str | None, Query(min_length=2,max_length=50)]= N
 
 
 
+
+
 # Update Todo
-@app.put("/Toodlo.ai/Home/Todo/{id}")
-async def Update_Todo(id:int, todo:TODO): 
-    todos[id]=todo
+@app.put("/Toodlo.ai/Home/Todo/{id}",response_model=TODOResponse)
+async def Update_Todo(id:int, todo:TODO, db:Session=Depends(get_db)): 
+    existing_todo = db.query(models.Todo).filter(
+        models.Todo.id == id
+    ).first()
+
+    if existing_todo is None:
+        raise HTTPException(status_code=404,detail="Todo Not found")
+    
+    existing_todo.title = todo.title
+    existing_todo.priority = todo.priority
+    existing_todo.status = todo.status
+    existing_todo.description = todo.description
+
+    db.commit()
+    db.refresh(existing_todo)
+    return existing_todo
+
+
+
     
 
 # Delete Todo
 @app.delete("/Toodlo.ai/Home/Todo/{id}")
-async def Delete_Todo(id:int):
-    todos.pop(id)
-   
+async def Delete_Todo(id:int,db:Session=Depends(get_db)):
+    existing_todo = db.query(models.Todo).filter(
+        models.Todo.id == id
+    ).first()
+
+    if existing_todo is None:
+        raise HTTPException(status_code=404,detail="Todo not found")
+
+    db.delete(existing_todo)
+    db.commit()
+
+    return {"Message: The TODO is deleted successfully !!"}
+    
 
 
 
