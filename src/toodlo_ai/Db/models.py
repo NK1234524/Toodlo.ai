@@ -14,6 +14,17 @@ class Todo(Base):
     created_at = Column(DateTime(timezone=True),default=lambda:datetime.now(timezone.utc))
     notes = Column(String,nullable=True)
 
+class User(Base):
+    __tablename__ ="users"
+    id = Column(Integer,primary_key=True,index=True)
+    username = Column(String,nullable=False)
+    Location = Column(String,nullable=False)
+    email_id = Column(String,nullable=False)
+    password_hash = Column(String, nullable=False)
+
+
+
+
 
 
 

@@ -31,6 +31,7 @@ class Status(str,Enum):
     in_progress = "in_progress"
     completed = "completed"
 
+# Todo Pydantic BaseModel
 class TODO(BaseModel):
     title:str=Field(min_length=3,max_length=100)
     status:Status
@@ -47,6 +48,13 @@ class TODOResponse(BaseModel):
     created_at : datetime
     notes : str | None
 
+# User registered Pydantic BaseModel
+class User_Registered(BaseModel):
+    username : str
+    Location : str
+    email_id : str
+    password : str = Field(min_length=8,max_length=8)
+
 
 #root
 @app.get("/")
@@ -54,6 +62,19 @@ def root():
     return("Welcome to root page")
 
 
+# Register a user : Register endpoint
+@app.post("/Toodlo.ai/Register")
+async def Register(user:User_Registered,db:Session = Depends(get_db)):
+    new_user = models.User(
+        username = user.username,
+        Location = user.Location,
+        email_id = user.email_id,
+        password_hash = user.password
+    )
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    return new_user
 
 
 # Create a Todo 
