@@ -11,8 +11,9 @@ from .Db.database import get_db
 from sqlalchemy import or_
 from fastapi import HTTPException
 from datetime import datetime ,timezone
+from pwdlib import PasswordHash
 
-
+pwd_hash = PasswordHash.recommended()
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI() 
@@ -55,6 +56,10 @@ class User_Registered(BaseModel):
     email_id : str
     password : str = Field(min_length=8,max_length=8)
 
+# User login pydantic BaseModel
+class User_Login(BaseModel):
+    identifier: str
+    password : str
 
 #root
 @app.get("/")
@@ -65,16 +70,33 @@ def root():
 # Register a user : Register endpoint
 @app.post("/Toodlo.ai/Register")
 async def Register(user:User_Registered,db:Session = Depends(get_db)):
+    hashed_password = pwd_hash.hash(user.password)
     new_user = models.User(
         username = user.username,
         Location = user.Location,
         email_id = user.email_id,
-        password_hash = user.password
+        password_hash = hashed_password
     )
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
     return new_user
+
+# Login of user : Login endpoint
+@app.post("/Toodlo.ai/login")
+async def Login(user:User_Login,db:Session = Depends(get_db)):
+    verify_user  = db.query(models.User).filter(
+        or_(
+            models.User.email_id == user.identifier,
+            models.User.username == user.identifier
+        )        
+    ).first()
+    if verify_user is None:
+        raise HTTPException(status_code=404,detail="User is not found")
+
+    if not pwd_hash.verify(user.password , verify_user.password_hash):
+        raise HTTPException(status_code = 401 , detail="Incorrect password")
+
 
 
 # Create a Todo 
