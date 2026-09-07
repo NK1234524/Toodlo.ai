@@ -100,7 +100,7 @@ async def Login(user:User_Login,db:Session = Depends(get_db)):
 
 
 # Create a Todo 
-@app.post("/Toodlo.ai/Home/Todo",response_model=TODOResponse)
+@app.post("/Toodlo.ai/CreateMyTodo",response_model=TODOResponse)
 async def CreateTodo(todo:TODO,db:Session = Depends(get_db)):
     new_todo=models.Todo(
         title = todo.title,
@@ -119,7 +119,7 @@ async def CreateTodo(todo:TODO,db:Session = Depends(get_db)):
 
 
 # Get the Todos
-@app.get("/Toodlo.ai/Home/Todo",response_model=list[TODOResponse])
+@app.get("/Toodlo.ai/GetMyTodos",response_model=list[TODOResponse])
 async def get_todo(q:Annotated[str | None, Query(min_length=2,max_length=50)]= None,db:Session=Depends(get_db) ):
     if q is None:
         return db.query(models.Todo).all()
@@ -138,7 +138,7 @@ async def get_todo(q:Annotated[str | None, Query(min_length=2,max_length=50)]= N
 
 
 # Update Todo
-@app.put("/Toodlo.ai/Home/Todo/{id}",response_model=TODOResponse)
+@app.put("/Toodlo.ai/UpdateMyTodos/{id}",response_model=TODOResponse)
 async def Update_Todo(id:int, todo:TODO, db:Session=Depends(get_db)): 
     existing_todo = db.query(models.Todo).filter(
         models.Todo.id == id
@@ -161,7 +161,7 @@ async def Update_Todo(id:int, todo:TODO, db:Session=Depends(get_db)):
     
 
 # Delete Todo
-@app.delete("/Toodlo.ai/Home/Todo/{id}")
+@app.delete("/Toodlo.ai/DeleteMyTodo/{id}")
 async def Delete_Todo(id:int,db:Session=Depends(get_db)):
     existing_todo = db.query(models.Todo).filter(
         models.Todo.id == id

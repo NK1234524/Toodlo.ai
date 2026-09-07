@@ -11,9 +11,11 @@ A RESTful Todo application built with FastAPI backend framework. It is consistin
 - uv
 - PostgreSQL
 - SQLAlchemy
-- psycopg
+- psycopg (DBAPI driver / network driver)
 - ORM(Object Relational Mapping)
 - Sessionmaker
+- Authentication
+
 
 ## Features
 
@@ -24,20 +26,21 @@ A RESTful Todo application built with FastAPI backend framework. It is consistin
 - Query Parameters
 - Request Validation
 - Restrictions & constraints
+- Hashing (pwdlib (Argon2 + parameters) pwd_hash)
+- verification (pwdlib (Argon2 + parameters) pwd_verify)
+- OAuth2
 
 ## API Endpoints
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | GET | `/` | Check API status |
-| GET | `/Toodlo.ai/login` | Login to Toodlo.ai |
+| POST | `/Toodlo.ai/Register` | Register if new user |
 | POST | `/Toodlo.ai/login` | Submit username & Password for Login |
-| POST | `/Toodlo.ai/register` | Register if new user |
-| GET | `/Toodlo.ai/Home` | Home page |
-| POST | `/Toodlo.ai/Home/Todo` | Create a Todo |
-| GET | `/Toodlo.ai/Home/Todo` | Get the TODOS |
-| PUT | `/Toodlo.ai/Home/Todo/{id}` | Update the Todo in todolist |
-| DELETE | `/Toodlo.ai/Home/Todo/{id}` | Delete the Todo in todolist |
+| POST | `/Toodlo.ai/CreateMyTodo` | Create a Todo |
+| GET | `/Toodlo.ai/GetMyTodos` | Get the TODOS of user |
+| PUT | `/Toodlo.ai/UpdateMyTodos/{id}` | Update the Todo in todolist |
+| DELETE | `/Toodlo.ai/DeleteMyTodo/{id}` | Delete the Todo in todolist |
 
 
 
