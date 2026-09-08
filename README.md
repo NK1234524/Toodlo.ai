@@ -14,7 +14,7 @@ A RESTful Todo application built with FastAPI backend framework. It is consistin
 - psycopg (DBAPI driver / network driver)
 - ORM(Object Relational Mapping)
 - Sessionmaker
-- Authentication
+- Authentication & Authorization
 
 
 ## Features
