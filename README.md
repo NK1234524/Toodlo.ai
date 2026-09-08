@@ -30,6 +30,7 @@ A RESTful Todo application built with FastAPI backend framework. It is consistin
 - verification (pwdlib (Argon2 + parameters) pwd_verify)
 - OAuth2
 
+
 ## API Endpoints
 
 | Method | Endpoint | Description |
