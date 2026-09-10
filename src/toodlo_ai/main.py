@@ -10,8 +10,11 @@ from fastapi import Depends
 from .Db.database import get_db
 from sqlalchemy import or_
 from fastapi import HTTPException
-from datetime import datetime ,timezone
+from datetime import datetime ,timedelta
 from pwdlib import PasswordHash
+from fastapi.security import OAuth2PasswordRequestForm
+from .Auth.security_key import create_access_token,ACCESS_TOKEN_EXPIRE_MINUTES
+
 
 pwd_hash = PasswordHash.recommended()
 Base.metadata.create_all(bind=engine)
@@ -84,18 +87,30 @@ async def Register(user:User_Registered,db:Session = Depends(get_db)):
 
 # Login of user : Login endpoint
 @app.post("/Toodlo.ai/login")
-async def Login(user:User_Login,db:Session = Depends(get_db)):
+async def Login(form_depends:Annotated[OAuth2PasswordRequestForm,  Depends()],db:Session = Depends(get_db)):
     verify_user  = db.query(models.User).filter(
         or_(
-            models.User.email_id == user.identifier,
-            models.User.username == user.identifier
+            models.User.email_id == form_depends.username,
+            models.User.username == form_depends.username
         )        
     ).first()
     if verify_user is None:
         raise HTTPException(status_code=404,detail="User is not found")
 
-    if not pwd_hash.verify(user.password , verify_user.password_hash):
+    if not pwd_hash.verify(form_depends.password , verify_user.password_hash):
         raise HTTPException(status_code = 401 , detail="Incorrect password")
+
+    access_token = create_access_token(
+        data ={"sub":str(verify_user.id)},
+        expires_delta =timedelta(
+            minutes = ACCESS_TOKEN_EXPIRE_MINUTES
+        )
+    )
+
+    return{
+        "access_token":access_token,
+        "token_type":"bearer"
+    }
 
 
 
