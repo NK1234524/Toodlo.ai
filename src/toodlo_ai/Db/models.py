@@ -1,4 +1,4 @@
-from sqlalchemy import Integer, Column,Boolean, String, DateTime
+from sqlalchemy import Integer, Column,Boolean, String, DateTime, ForeignKey
 from .database import Base
 from datetime import datetime , timezone
 
@@ -13,6 +13,7 @@ class Todo(Base):
     status = Column(String,nullable=False)
     created_at = Column(DateTime(timezone=True),default=lambda:datetime.now(timezone.utc))
     notes = Column(String,nullable=True)
+    user_id = Column(Integer, ForeignKey("users.id"),nullable=False )
 
 class User(Base):
     __tablename__ ="users"
