@@ -21,7 +21,7 @@ oauth2_scheme = OAuth2PasswordBearer(
     tokenUrl="Toodlo.ai/login"
 )
 
-# Created the access token here 
+# Created the access token here : token for the access is created
 def create_access_token(data: dict, expires_delta: timedelta | None = None):
     to_encode = data.copy()
 
