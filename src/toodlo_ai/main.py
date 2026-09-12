@@ -13,7 +13,7 @@ from fastapi import HTTPException
 from datetime import datetime ,timedelta
 from pwdlib import PasswordHash
 from fastapi.security import OAuth2PasswordRequestForm
-from .Auth.security_key import create_access_token,ACCESS_TOKEN_EXPIRE_MINUTES
+from .Auth.security_key import create_access_token,ACCESS_TOKEN_EXPIRE_MINUTES,get_current_user
 
 
 pwd_hash = PasswordHash.recommended()
@@ -87,7 +87,9 @@ async def Register(user:User_Registered,db:Session = Depends(get_db)):
 
 # Login of user : Login endpoint
 @app.post("/Toodlo.ai/login")
-async def Login(form_depends:Annotated[OAuth2PasswordRequestForm,  Depends()],db:Session = Depends(get_db)):
+async def Login(form_depends:Annotated[OAuth2PasswordRequestForm,  Depends()],
+    db:Session = Depends(get_db)):
+
     verify_user  = db.query(models.User).filter(
         or_(
             models.User.email_id == form_depends.username,
@@ -135,7 +137,10 @@ async def CreateTodo(todo:TODO,db:Session = Depends(get_db)):
 
 # Get the Todos
 @app.get("/Toodlo.ai/GetMyTodos",response_model=list[TODOResponse])
-async def get_todo(q:Annotated[str | None, Query(min_length=2,max_length=50)]= None,db:Session=Depends(get_db) ):
+async def get_todo(q:Annotated[str | None, Query(min_length=2,max_length=50)]= None,
+    db:Session=Depends(get_db),
+    current_user : models.User= Depends(get_current_user)):
+    
     if q is None:
         return db.query(models.Todo).all()
 
