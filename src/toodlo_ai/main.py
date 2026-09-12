@@ -41,6 +41,7 @@ class TODO(BaseModel):
     status:Status
     priority:Priority
     description:str
+    notes:str | None=None
 
 class TODOResponse(BaseModel):
     id : int
@@ -59,7 +60,14 @@ class User_Registered(BaseModel):
     email_id : str
     password : str = Field(min_length=8,max_length=8)
 
-# User login pydantic BaseModel
+# User registration pydantic response BaseModel
+class User_Registeration(BaseModel):
+    id : int
+    username :str
+    Location :str
+    email_id :str
+
+# User login pydantic response BaseModel
 class User_Login(BaseModel):
     identifier: str
     password : str
@@ -71,7 +79,7 @@ def root():
 
 
 # Register a user : Register endpoint
-@app.post("/Toodlo.ai/Register")
+@app.post("/Toodlo.ai/Register",response_model =User_Registeration)
 async def Register(user:User_Registered,db:Session = Depends(get_db)):
     hashed_password = pwd_hash.hash(user.password)
     new_user = models.User(
@@ -118,12 +126,16 @@ async def Login(form_depends:Annotated[OAuth2PasswordRequestForm,  Depends()],
 
 # Create a Todo 
 @app.post("/Toodlo.ai/CreateMyTodo",response_model=TODOResponse)
-async def CreateTodo(todo:TODO,db:Session = Depends(get_db)):
+async def CreateTodo(todo:TODO,db:Session = Depends(get_db),
+    current_user:models.User = Depends(get_current_user)):
+
     new_todo=models.Todo(
         title = todo.title,
         priority = todo.priority,
         status = todo.status,
-        description=todo.description
+        description=todo.description,
+        notes = todo.notes,
+        user_id = current_user.id
     )
 
     db.add(new_todo)
@@ -140,15 +152,18 @@ async def CreateTodo(todo:TODO,db:Session = Depends(get_db)):
 async def get_todo(q:Annotated[str | None, Query(min_length=2,max_length=50)]= None,
     db:Session=Depends(get_db),
     current_user : models.User= Depends(get_current_user)):
-    
+
     if q is None:
-        return db.query(models.Todo).all()
+        return db.query(models.Todo).filter(
+            models.Todo.user_id == current_user.id
+        ).all()
 
     return db.query(models.Todo).filter(
+        models.Todo.user_id == current_user.id,
             or_(
                 models.Todo.title.ilike(f"%{q}%"),
                 models.Todo.status.ilike(f"%{q}%"),
-                models.Todo.priority.ilike(f"%{q}%"),
+                models.Todo.priority.ilike(f"%{q}%")                
             )
         ).all()
    
@@ -159,9 +174,11 @@ async def get_todo(q:Annotated[str | None, Query(min_length=2,max_length=50)]= N
 
 # Update Todo
 @app.put("/Toodlo.ai/UpdateMyTodos/{id}",response_model=TODOResponse)
-async def Update_Todo(id:int, todo:TODO, db:Session=Depends(get_db)): 
+async def Update_Todo(id:int, todo:TODO, db:Session=Depends(get_db),
+    current_user:models.User=Depends(get_current_user)): 
     existing_todo = db.query(models.Todo).filter(
-        models.Todo.id == id
+        models.Todo.id == id,
+        models.Todo.user_id == current_user.id
     ).first()
 
     if existing_todo is None:
@@ -171,6 +188,7 @@ async def Update_Todo(id:int, todo:TODO, db:Session=Depends(get_db)):
     existing_todo.priority = todo.priority
     existing_todo.status = todo.status
     existing_todo.description = todo.description
+    existing_todo.notes = todo.notes
 
     db.commit()
     db.refresh(existing_todo)
@@ -182,9 +200,11 @@ async def Update_Todo(id:int, todo:TODO, db:Session=Depends(get_db)):
 
 # Delete Todo
 @app.delete("/Toodlo.ai/DeleteMyTodo/{id}")
-async def Delete_Todo(id:int,db:Session=Depends(get_db)):
+async def Delete_Todo(id:int,db:Session=Depends(get_db),
+    current_user:models.User=Depends(get_current_user)):
     existing_todo = db.query(models.Todo).filter(
-        models.Todo.id == id
+        models.Todo.id == id,
+        models.Todo.user_id == current_user.id
     ).first()
 
     if existing_todo is None:
@@ -193,7 +213,7 @@ async def Delete_Todo(id:int,db:Session=Depends(get_db)):
     db.delete(existing_todo)
     db.commit()
 
-    return {"Message: The TODO is deleted successfully !!"}
+    return {"Message": "The TODO is deleted successfully !!"}
     
 
 
