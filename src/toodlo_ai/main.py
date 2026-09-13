@@ -42,6 +42,7 @@ class TODO(BaseModel):
     priority:Priority
     description:str
     notes:str | None=None
+    due_Date:datetime | None =None
 
 class TODOResponse(BaseModel):
     id : int
@@ -52,6 +53,7 @@ class TODOResponse(BaseModel):
     status  : Status
     created_at : datetime
     notes : str | None
+    due_Date : datetime | None =None
 
 # User registered Pydantic BaseModel
 class User_Registered(BaseModel):
@@ -135,7 +137,8 @@ async def CreateTodo(todo:TODO,db:Session = Depends(get_db),
         status = todo.status,
         description=todo.description,
         notes = todo.notes,
-        user_id = current_user.id
+        user_id = current_user.id,
+        due_Date = todo.due_Date
     )
 
     db.add(new_todo)

@@ -14,6 +14,7 @@ class Todo(Base):
     created_at = Column(DateTime(timezone=True),default=lambda:datetime.now(timezone.utc))
     notes = Column(String,nullable=True)
     user_id = Column(Integer, ForeignKey("users.id"),nullable=False )
+    due_date = Column(DateTime(timezone=True),nullable=True)
 
 class User(Base):
     __tablename__ ="users"
