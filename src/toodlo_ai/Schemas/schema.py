@@ -1,0 +1,74 @@
+from enum import Enum
+from pydantic import BaseModel,Field
+from datetime import datetime ,timedelta
+class UserDetails(BaseModel):
+    User:str
+    
+
+class Priority(str,Enum):
+    low = "low"
+    medium = 'medium'
+    high = 'high'
+
+class Status(str,Enum):
+    pending = "pending"
+    in_progress = "in_progress"
+    completed = "completed"
+
+# Todo Pydantic BaseModel
+class TODO(BaseModel):
+    title:str=Field(min_length=3,max_length=100)
+    status:Status
+    priority:Priority
+    description:str
+    notes:str | None=None
+    due_Date:datetime | None =None
+
+class TODOResponse(BaseModel):
+    id : int
+    title : str
+    description : str
+    completed : bool
+    priority : Priority
+    status  : Status
+    created_at : datetime
+    notes : str | None
+    due_Date : datetime | None =None
+
+# User registered Pydantic BaseModel
+class User_Registered(BaseModel):
+    username : str
+    Location : str
+    email_id : str
+    password : str = Field(min_length=8,max_length=8)
+
+# User registration pydantic response BaseModel
+class User_Registeration(BaseModel):
+    id : int
+    username :str
+    Location :str
+    email_id :str
+
+# User login pydantic response BaseModel
+class User_Login(BaseModel):
+    identifier: str
+    password : str
+
+# AI action
+class AI_Action(str,Enum):
+    ready ="ready"
+    clarification_required = "clarification_required"
+
+# AI RESPONSE model
+class AI_Response_Model(BaseModel):
+    action : AI_Action
+    todo:TODO | None = None
+    question : str | None = None
+
+# AI request model to the Frontend
+class AI_TODO_request(BaseModel):
+    content :str
+
+# AI request model for clarification
+class AI_TODO_Clarification_request(BaseModel):
+    clarification : str | None=None

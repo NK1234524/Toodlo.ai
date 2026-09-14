@@ -25,7 +25,12 @@ class User(Base):
     password_hash = Column(String, nullable=False)
 
 
-
+class AI_Clarification_Pending(Base):
+    __tablename__ = "Clarification_pending"
+    id =Column(Integer,primary_key=True,index=True)
+    user_id = Column(Integer, ForeignKey("users.id"),nullable=False )
+    original_req = Column(String,nullable=False)
+    question = Column(String,nullable=False)
 
 
 

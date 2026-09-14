@@ -1,6 +1,4 @@
 from fastapi import FastAPI
-from enum import Enum
-from pydantic import BaseModel,Field
 from fastapi import Query
 from typing import Annotated
 from .Db.database import Base,engine
@@ -10,10 +8,22 @@ from fastapi import Depends
 from .Db.database import get_db
 from sqlalchemy import or_
 from fastapi import HTTPException
-from datetime import datetime ,timedelta
+from datetime import timedelta,date
 from pwdlib import PasswordHash
 from fastapi.security import OAuth2PasswordRequestForm
 from .Auth.security_key import create_access_token,ACCESS_TOKEN_EXPIRE_MINUTES,get_current_user
+from .AI.client import client
+from toodlo_ai.AI.Instruction.todo_creation_instruction import TODO_CREATION_INSTRUCTION
+from .Schemas.schema import(
+    TODO,
+    TODOResponse,    
+    User_Registered,
+    User_Registeration,    
+    AI_Response_Model,
+    AI_TODO_request,
+    AI_TODO_Clarification_request,
+    AI_Action
+)
 
 
 pwd_hash = PasswordHash.recommended()
@@ -21,58 +31,6 @@ Base.metadata.create_all(bind=engine)
 
 app = FastAPI() 
 
-class UserDetails(BaseModel):
-    User:str
-    
-
-class Priority(str,Enum):
-    low = "low"
-    medium = 'medium'
-    high = 'high'
-
-class Status(str,Enum):
-    pending = "pending"
-    in_progress = "in_progress"
-    completed = "completed"
-
-# Todo Pydantic BaseModel
-class TODO(BaseModel):
-    title:str=Field(min_length=3,max_length=100)
-    status:Status
-    priority:Priority
-    description:str
-    notes:str | None=None
-    due_Date:datetime | None =None
-
-class TODOResponse(BaseModel):
-    id : int
-    title : str
-    description : str
-    completed : bool
-    priority : Priority
-    status  : Status
-    created_at : datetime
-    notes : str | None
-    due_Date : datetime | None =None
-
-# User registered Pydantic BaseModel
-class User_Registered(BaseModel):
-    username : str
-    Location : str
-    email_id : str
-    password : str = Field(min_length=8,max_length=8)
-
-# User registration pydantic response BaseModel
-class User_Registeration(BaseModel):
-    id : int
-    username :str
-    Location :str
-    email_id :str
-
-# User login pydantic response BaseModel
-class User_Login(BaseModel):
-    identifier: str
-    password : str
 
 #root
 @app.get("/")
@@ -146,6 +104,85 @@ async def CreateTodo(todo:TODO,db:Session = Depends(get_db),
     db.refresh(new_todo)
 
     return new_todo
+
+# Create Todo by AI gemini
+@app.post("/Toodlo.ai/AI/CreateMyTodo")
+async def AI_Create_Todo(request_model: AI_TODO_request, db:Session = Depends(get_db),
+    current_user:models.User = Depends(get_current_user)):
+    response = client.models.generate_content(
+    model = "gemini-3.6-flash",
+    contents = request_model.content,
+    config = {
+        "system_instruction":TODO_CREATION_INSTRUCTION,
+        "response_mime_type":"application/json",
+        "response_schema":AI_Response_Model
+    }
+)
+    if response.parsed.action == AI_Action.clarification_required:
+        pending_clarification = models.AI_Clarification_Pending(
+            user_id = current_user.id,
+            original_req = request_model.content,
+            question = response.parsed.question
+        )
+        
+        db.add(pending_clarification)
+        db.commit()
+        return response.parsed
+    if response.parsed.action ==AI_Action.ready:
+        new_todo = models.Todo(
+            title=response.parsed.todo.title,
+            priority=response.parsed.todo.priority,
+            status=response.parsed.todo.status,
+            description=response.parsed.todo.description,
+            notes=response.parsed.todo.notes,
+            user_id=current_user.id,
+            due_Date=response.parsed.todo.due_Date
+            )
+        db.add(new_todo)
+        db.commit()
+        db.refresh(new_todo)
+        
+
+
+# Clarification of Todo
+@app.post("/Toodlo.ai/AI/clarifyMyTodo")
+async def AI_Todo_clarification(request_model : AI_TODO_Clarification_request,
+    db:Session = Depends(get_db),current_user:models.User = Depends(get_current_user)):
+    pending_Clarification = db.query(
+        models.AI_Clarification_Pending
+    ).filter(
+        models.AI_Clarification_Pending.user_id == current_user.id
+    ).first()
+
+    if pending_Clarification is None :
+        raise HTTPException (status_code= 404, detail= "No pending clarifiation found")
+    context = f""" current date : {date.today()}
+    Original request : {pending_Clarification.original_req}
+    User clarification : {request_model.clarification}"""
+    response = client.models.generate_content(
+        model = "gemini-3.6-flash",
+        contents = context,
+        config = {
+            "system_instruction":TODO_CREATION_INSTRUCTION,
+            "response_mime_type":"application/json",
+            "response_schema":AI_Response_Model
+        }
+    )
+    if response.parsed.action ==AI_Action.ready:
+        new_todo = models.Todo(
+            title=response.parsed.todo.title,
+            priority=response.parsed.todo.priority,
+            status=response.parsed.todo.status,
+            description=response.parsed.todo.description,
+            notes=response.parsed.todo.notes,
+            user_id=current_user.id,
+            due_Date=response.parsed.todo.due_Date
+            )
+        db.add(new_todo)
+        db.commit()
+        db.refresh(new_todo)
+        return new_todo
+    return response.parsed
 
 
 
