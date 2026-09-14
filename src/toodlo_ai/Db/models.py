@@ -8,11 +8,11 @@ class Todo(Base):
     id = Column(Integer,primary_key=True,index=True)
     title = Column(String,nullable=False)
     description = Column(String , nullable=False)
-    completed = Column(Boolean,default=False)
+    #completed = Column(Boolean,default=False)
     priority = Column(String,nullable=False)
     status = Column(String,nullable=False)
     created_at = Column(DateTime(timezone=True),default=lambda:datetime.now(timezone.utc))
-    notes = Column(String,nullable=True)
+    #notes = Column(String,nullable=True)
     user_id = Column(Integer, ForeignKey("users.id"),nullable=False )
     due_Date = Column(DateTime(timezone=True),nullable=True)
 

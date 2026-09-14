@@ -94,7 +94,7 @@ async def CreateTodo(todo:TODO,db:Session = Depends(get_db),
         priority = todo.priority,
         status = todo.status,
         description=todo.description,
-        notes = todo.notes,
+        #notes = todo.notes,
         user_id = current_user.id,
         due_Date = todo.due_Date
     )
@@ -134,7 +134,7 @@ async def AI_Create_Todo(request_model: AI_TODO_request, db:Session = Depends(ge
             priority=response.parsed.todo.priority,
             status=response.parsed.todo.status,
             description=response.parsed.todo.description,
-            notes=response.parsed.todo.notes,
+            #notes=response.parsed.todo.notes,
             user_id=current_user.id,
             due_Date=response.parsed.todo.due_Date
             )
@@ -174,7 +174,7 @@ async def AI_Todo_clarification(request_model : AI_TODO_Clarification_request,
             priority=response.parsed.todo.priority,
             status=response.parsed.todo.status,
             description=response.parsed.todo.description,
-            notes=response.parsed.todo.notes,
+            #notes=response.parsed.todo.notes,
             user_id=current_user.id,
             due_Date=response.parsed.todo.due_Date
             )
@@ -228,7 +228,7 @@ async def Update_Todo(id:int, todo:TODO, db:Session=Depends(get_db),
     existing_todo.priority = todo.priority
     existing_todo.status = todo.status
     existing_todo.description = todo.description
-    existing_todo.notes = todo.notes
+    #existing_todo.notes = todo.notes
 
     db.commit()
     db.refresh(existing_todo)

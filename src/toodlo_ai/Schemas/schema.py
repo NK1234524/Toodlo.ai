@@ -21,18 +21,18 @@ class TODO(BaseModel):
     status:Status
     priority:Priority
     description:str
-    notes:str | None=None
+    #notes:str | None=None
     due_Date:datetime | None =None
 
 class TODOResponse(BaseModel):
     id : int
     title : str
     description : str
-    completed : bool
+    #completed : bool
     priority : Priority
     status  : Status
     created_at : datetime
-    notes : str | None
+    #notes : str | None
     due_Date : datetime | None =None
 
 # User registered Pydantic BaseModel
