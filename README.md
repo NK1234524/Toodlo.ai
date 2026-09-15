@@ -53,6 +53,9 @@ Toodlo.ai/
     ├── src/
         ├── toodlo_ai
                     ├── main.py
+                    ├── AI/
+                        ├── Instruction/
+                        client.py
                     ├── Db/
                         ├── database.py
                         ├── models.py
