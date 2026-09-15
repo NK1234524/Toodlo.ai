@@ -55,12 +55,15 @@ Toodlo.ai/
                     ├── main.py
                     ├── AI/
                         ├── Instruction/
+                                        ├── todo_creation.py
                         client.py
                     ├── Db/
                         ├── database.py
                         ├── models.py
                     ├── Auth/
                         ├── security_key.py
+                    ├── Schemas/
+                        ├── schema.py
 ├── pyproject.toml
 ├── uv.lock
 ├── README.md
