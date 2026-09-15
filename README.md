@@ -15,6 +15,9 @@ A RESTful Todo application built with FastAPI backend framework. It is consistin
 - ORM(Object Relational Mapping)
 - Sessionmaker
 - Authentication & Authorization
+- AI agent
+- Gemini API key
+
 
 
 ## Features
@@ -30,6 +33,10 @@ A RESTful Todo application built with FastAPI backend framework. It is consistin
 - verification (pwdlib (Argon2 + parameters) pwd_verify)
 - OAuth2
 - OAuthpasswordReceiver
+- AI integration with authentication
+- PostgreSQL DB connection with Gemini api 
+- Automatic data creation in DB
+
 
 
 ## API Endpoints
