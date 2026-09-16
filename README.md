@@ -36,6 +36,7 @@ A RESTful Todo application built with FastAPI backend framework. It is consistin
 - AI integration with authentication
 - PostgreSQL DB connection with Gemini api 
 - Automatic data creation in DB
+- Instructions against Ambiguous request
 
 
 
