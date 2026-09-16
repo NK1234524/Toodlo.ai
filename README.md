@@ -47,6 +47,8 @@ A RESTful Todo application built with FastAPI backend framework. It is consistin
 | POST | `/Toodlo.ai/Register` | Register if new user |
 | POST | `/Toodlo.ai/login` | Submit username & Password for Login |
 | POST | `/Toodlo.ai/CreateMyTodo` | Create a Todo |
+| POST | `/Toodlo.ai/AI/CreateMyTodo` | Create a Todo throguh prompt|
+| POST | `/Toodlo.ai/AI/clarifyMyTodo` | Clarify my prompt if it is ambiguous|
 | GET | `/Toodlo.ai/GetMyTodos` | Get the TODOS of user |
 | PUT | `/Toodlo.ai/UpdateMyTodos/{id}` | Update the Todo in todolist |
 | DELETE | `/Toodlo.ai/DeleteMyTodo/{id}` | Delete the Todo in todolist |
