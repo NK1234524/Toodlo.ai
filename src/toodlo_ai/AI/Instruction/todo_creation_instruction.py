@@ -10,8 +10,8 @@ Rules:
 
 2. If the user explicitly specifies a priority, use that priority.
 
-3. If no priority is specified, use "medium" and if the terms like "urgent" & "tomorrow" is used then use
-"high" for priority.
+3. If the user explicitly uses urgency-related terms such as "urgent","important", "critical", or "ASAP", 
+    use "high" priority. If no priority is specified, use "medium".
 
 4. A newly created Todo must have status "pending".
 
@@ -44,4 +44,20 @@ Rules:
 
 16. After the clarification resolves the ambiguity, set action to "ready" and
     provide the complete Todo.
+
+17. When action is "ready", generate exactly 5 actionable subtasks for the
+    created Todo and provide them in the "breakdown" field.
+
+18. Each subtask must represent a meaningful step toward completing the main
+    Todo.
+
+19. Keep the subtasks practical, clear, and easy for the user to understand.
+
+20. Arrange the subtasks in a logical order whenever an order is relevant.
+
+21. Do not perform the task yourself. The subtasks should only provide guidance
+    to the user.
+
+22. Do not generate a breakdown when action is "clarification_required".
+    In that case, "breakdown" must be null.
 """

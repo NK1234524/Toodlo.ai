@@ -113,7 +113,7 @@ async def AI_Create_Todo(request_model: AI_TODO_request, db:Session = Depends(ge
     context = f"""
         Current date: {date.today()}
         User request: {request_model.content}
-        """,
+        """
     
     response = client.models.generate_content(
     model = "gemini-3.6-flash",
@@ -125,6 +125,7 @@ async def AI_Create_Todo(request_model: AI_TODO_request, db:Session = Depends(ge
         "response_schema":AI_Response_Model
     }
 )
+    #print(response.parsed)
     if response.parsed.action == AI_Action.clarification_required:
         pending_clarification = models.AI_Clarification_Pending(
             user_id = current_user.id,
@@ -148,6 +149,10 @@ async def AI_Create_Todo(request_model: AI_TODO_request, db:Session = Depends(ge
         db.add(new_todo)
         db.commit()
         db.refresh(new_todo)
+        return {
+            "todo":new_todo,
+            "breakdown":response.parsed.breakdown
+        }
         
 
 

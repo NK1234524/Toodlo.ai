@@ -64,6 +64,7 @@ class AI_Response_Model(BaseModel):
     action : AI_Action
     todo:TODO | None = None
     question : str | None = None
+    breakdown : str | None = None
 
 # AI request model to the Frontend
 class AI_TODO_request(BaseModel):
@@ -72,3 +73,11 @@ class AI_TODO_request(BaseModel):
 # AI request model for clarification
 class AI_TODO_Clarification_request(BaseModel):
     clarification : str | None=None
+
+# AI response for subtasks
+class AI_TODO_Subtasks(BaseModel):
+    subtask1:str 
+    subtask2:str 
+    subtask3:str
+    subtask4:str
+    subtask5:str
