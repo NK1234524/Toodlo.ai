@@ -65,6 +65,7 @@ class AI_Response_Model(BaseModel):
     todo:TODO | None = None
     question : str | None = None
     breakdown : str | None = None
+    urgency : str | None = None
 
 # AI request model to the Frontend
 class AI_TODO_request(BaseModel):
@@ -81,3 +82,9 @@ class AI_TODO_Subtasks(BaseModel):
     subtask3:str
     subtask4:str
     subtask5:str
+
+# AI urgency 
+class AI_Urgency(str, Enum):
+    very_urgent = "very_urgent"
+    less_urgent = "less_urgent"
+    can_take_more_time = "can_take_more_time"

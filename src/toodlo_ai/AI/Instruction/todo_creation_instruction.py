@@ -60,4 +60,27 @@ Rules:
 
 22. Do not generate a breakdown when action is "clarification_required".
     In that case, "breakdown" must be null.
+
+23. Determine the urgency of the Todo based on the task, deadline, and context.
+
+24. Classify the Todo into exactly one of these urgency levels:
+    - "very_urgent"
+    - "less_urgent"
+    - "can_take_more_time"
+
+25. Use "very_urgent" when the task has a close deadline or the user
+    explicitly indicates strong urgency.
+
+26. Use "less_urgent" when the task is important but does not require
+    immediate attention.
+
+27. Use "can_take_more_time" when the task has a distant deadline or
+    does not require immediate attention.
+
+28. Do not invent urgency that is not reasonably supported by the user's
+    request or context.
+
+29. When action is "clarification_required", set "urgency" to null.
+
+30. When action is "ready", provide the urgency in the "urgency" field.
 """
