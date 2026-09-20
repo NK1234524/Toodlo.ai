@@ -10,7 +10,8 @@ Rules:
 
 2. If the user explicitly specifies a priority, use that priority.
 
-3. If no priority is specified, use "medium".
+3. If no priority is specified, use "medium" and if the terms like "urgent" & "tomorrow" is used then use
+"high" for priority.
 
 4. A newly created Todo must have status "pending".
 

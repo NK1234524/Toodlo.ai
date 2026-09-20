@@ -109,9 +109,16 @@ async def CreateTodo(todo:TODO,db:Session = Depends(get_db),
 @app.post("/Toodlo.ai/AI/CreateMyTodo")
 async def AI_Create_Todo(request_model: AI_TODO_request, db:Session = Depends(get_db),
     current_user:models.User = Depends(get_current_user)):
+
+    context = f"""
+        Current date: {date.today()}
+        User request: {request_model.content}
+        """,
+    
     response = client.models.generate_content(
     model = "gemini-3.6-flash",
-    contents = request_model.content,
+    
+    contents = context,
     config = {
         "system_instruction":TODO_CREATION_INSTRUCTION,
         "response_mime_type":"application/json",
