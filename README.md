@@ -1,6 +1,6 @@
 # Toodlo.ai
 
-A RESTful Todo application built with FastAPI backend framework. It is consisting of certain features mentioned below.
+A complete AI assisted product for people of various fields so that they could able to make the todolist in their busy schedule. Toodlo.ai also comprises of proper analysis of priortisation and urgency of the todo task.
 
 ## Tech Stack
 
