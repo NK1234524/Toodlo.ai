@@ -17,6 +17,7 @@ A RESTful Todo application built with FastAPI backend framework. It is consistin
 - Authentication & Authorization
 - AI agent
 - Gemini API key
+- AI analysis after the Todo creation through prompt.
 
 
 
@@ -37,6 +38,7 @@ A RESTful Todo application built with FastAPI backend framework. It is consistin
 - PostgreSQL DB connection with Gemini api 
 - Automatic data creation in DB
 - Instructions against Ambiguous request
+- Instructions given to AI for analysing urgency and priortization of the todo.
 
 
 
