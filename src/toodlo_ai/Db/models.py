@@ -15,6 +15,7 @@ class Todo(Base):
     #notes = Column(String,nullable=True)
     user_id = Column(Integer, ForeignKey("users.id"),nullable=False )
     due_Date = Column(DateTime(timezone=True),nullable=True)
+    urgency = Column(String , nullable=False)
 
 class User(Base):
     __tablename__ ="users"

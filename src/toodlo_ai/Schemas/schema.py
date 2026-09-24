@@ -23,6 +23,7 @@ class TODO(BaseModel):
     description:str
     #notes:str | None=None
     due_Date:datetime | None =None
+    urgency:str | None=None
 
 class TODOResponse(BaseModel):
     id : int

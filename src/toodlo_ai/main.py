@@ -144,7 +144,8 @@ async def AI_Create_Todo(request_model: AI_TODO_request, db:Session = Depends(ge
             description=response.parsed.todo.description,
             #notes=response.parsed.todo.notes,
             user_id=current_user.id,
-            due_Date=response.parsed.todo.due_Date
+            due_Date=response.parsed.todo.due_Date,
+            urgency = response.parsed.urgency
             )
         db.add(new_todo)
         db.commit()
@@ -240,6 +241,7 @@ async def Update_Todo(id:int, todo:TODO, db:Session=Depends(get_db),
     existing_todo.priority = todo.priority
     existing_todo.status = todo.status
     existing_todo.description = todo.description
+    existing_todo.urgency = todo.urgency
     #existing_todo.notes = todo.notes
 
     db.commit()
