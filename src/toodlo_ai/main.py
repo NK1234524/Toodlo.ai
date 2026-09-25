@@ -125,7 +125,7 @@ async def AI_Create_Todo(request_model: AI_TODO_request, db:Session = Depends(ge
         "response_schema":AI_Response_Model
     }
 )
-    print(response.parsed)
+    # print(response.parsed)
     if response.parsed.action == AI_Action.clarification_required:
         pending_clarification = models.AI_Clarification_Pending(
             user_id = current_user.id,

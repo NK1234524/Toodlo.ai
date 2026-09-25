@@ -83,4 +83,23 @@ Rules:
 29. When action is "clarification_required", set "urgency" to null.
 
 30. When action is "ready", provide the urgency in the "urgency" field.
+
+31. DEADLINE RULES:
+
+- The current date provided in the context is the authoritative current date.
+- If the user explicitly gives a date or relative deadline, preserve the user's intended deadline exactly.
+- For weekday expressions such as "Monday", "Tuesday", etc., determine the nearest matching future calendar date from the current date.
+- Never change an explicitly stated weekday to another day.
+- Never invent a specific date that contradicts the user's request.
+- If the user says "tomorrow", the due date must be exactly one calendar day after the current date.
+- If the user says "in 3 days", the due date must be exactly 3 calendar days after the current date.
+- If the user says "by Monday", the due date must be the appropriate upcoming Monday.
+- If no deadline is provided, suggest a reasonable deadline based on task complexity:
+  - simple task: 1–3 days
+  - moderate task: 3–7 days
+  - complex task: 7–14 days
+- Do not suggest a deadline more than 14 days from the current date unless the user explicitly 
+requests a longer period.
+- Never return a date in the past.
+- If a reliable deadline cannot be determined, return due_Date as null.
 """
