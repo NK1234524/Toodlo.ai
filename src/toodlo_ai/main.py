@@ -116,7 +116,7 @@ async def AI_Create_Todo(request_model: AI_TODO_request, db:Session = Depends(ge
         """
     
     response = client.models.generate_content(
-    model = "gemini-3.7-flash",
+    model = "gemini-3.6-flash",
     
     contents = context,
     config = {
@@ -173,7 +173,7 @@ async def AI_Todo_clarification(request_model : AI_TODO_Clarification_request,
     Original request : {pending_Clarification.original_req}
     User clarification : {request_model.clarification}"""
     response = client.models.generate_content(
-        model = "gemini-3.7-flash",
+        model = "gemini-3.6-flash",
         contents = context,
         config = {
             "system_instruction":TODO_CREATION_INSTRUCTION,
