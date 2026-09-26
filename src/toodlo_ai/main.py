@@ -13,6 +13,7 @@ from pwdlib import PasswordHash
 from fastapi.security import OAuth2PasswordRequestForm
 from .Auth.security_key import create_access_token,ACCESS_TOKEN_EXPIRE_MINUTES,get_current_user
 from .AI.client import client
+from .AI.deadline import calculate_due_date
 from toodlo_ai.AI.Instruction.todo_creation_instruction import TODO_CREATION_INSTRUCTION
 from .Schemas.schema import(
     TODO,
@@ -137,6 +138,10 @@ async def AI_Create_Todo(request_model: AI_TODO_request, db:Session = Depends(ge
         db.commit()
         return response.parsed
     if response.parsed.action ==AI_Action.ready:
+        due_date = calculate_due_date(
+            response.parsed.deadline_type,
+            response.parsed.deadline_value
+        )
         new_todo = models.Todo(
             title=response.parsed.todo.title,
             priority=response.parsed.todo.priority,
@@ -144,7 +149,7 @@ async def AI_Create_Todo(request_model: AI_TODO_request, db:Session = Depends(ge
             description=response.parsed.todo.description,
             #notes=response.parsed.todo.notes,
             user_id=current_user.id,
-            due_Date=response.parsed.todo.due_Date,
+            due_Date= due_date,
             urgency = response.parsed.urgency
             )
         db.add(new_todo)
@@ -152,7 +157,9 @@ async def AI_Create_Todo(request_model: AI_TODO_request, db:Session = Depends(ge
         db.refresh(new_todo)
         return {
             "todo":new_todo,
-            "breakdown":response.parsed.breakdown
+            "breakdown":response.parsed.breakdown,
+            "deadline_type":response.parsed.deadline_type,
+            "deadline_value":response.parsed.deadline_value
         }
         
 

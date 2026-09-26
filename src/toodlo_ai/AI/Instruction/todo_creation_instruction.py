@@ -84,22 +84,29 @@ Rules:
 
 30. When action is "ready", provide the urgency in the "urgency" field.
 
-31. DEADLINE RULES:
+31. DEADLINE INTERPRETATION RULES:
 
-- The current date provided in the context is the authoritative current date.
-- If the user explicitly gives a date or relative deadline, preserve the user's intended deadline exactly.
-- For weekday expressions such as "Monday", "Tuesday", etc., determine the nearest matching future calendar date from the current date.
-- Never change an explicitly stated weekday to another day.
-- Never invent a specific date that contradicts the user's request.
-- If the user says "tomorrow", the due date must be exactly one calendar day after the current date.
-- If the user says "in 3 days", the due date must be exactly 3 calendar days after the current date.
-- If the user says "by Monday", the due date must be the appropriate upcoming Monday.
-- If no deadline is provided, suggest a reasonable deadline based on task complexity:
-  - simple task: 1–3 days
-  - moderate task: 3–7 days
-  - complex task: 7–14 days
-- Do not suggest a deadline more than 14 days from the current date unless the user explicitly 
-requests a longer period.
-- Never return a date in the past.
-- If a reliable deadline cannot be determined, return due_Date as null.
+- Identify whether the user provided an explicit deadline, a relative deadline, or no deadline.
+- Set deadline_type to exactly one of:
+  - "explicit"
+  - "relative"
+  - "suggested"
+
+- If the user explicitly mentions a calendar date or weekday, use:
+  deadline_type = "explicit"
+  deadline_value = the exact deadline expression from the user.
+  Examples: "Monday", "September 30", "by Friday".
+
+- If the user gives a relative time, use:
+  deadline_type = "relative"
+  deadline_value = the exact relative duration.
+  Examples: "tomorrow", "in 3 days", "next week".
+
+- If the user does not provide any deadline, use:
+  deadline_type = "suggested"
+  deadline_value = a reasonable duration such as "2 days", "5 days", or "10 days" based on task complexity.
+
+- Do NOT calculate or invent the final calendar date yourself.
+- The backend will calculate the final due_Date from deadline_type and deadline_value.
+- If clarification is required, deadline_type and deadline_value should be null.
 """

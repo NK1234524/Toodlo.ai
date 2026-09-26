@@ -60,6 +60,12 @@ class AI_Action(str,Enum):
     ready ="ready"
     clarification_required = "clarification_required"
 
+# Deadline_Type
+class DeadlineType(str,Enum):
+    explicit = "explicit"
+    relative = "relative"
+    suggested = "suggested"
+    
 # AI RESPONSE model
 class AI_Response_Model(BaseModel):
     action : AI_Action
@@ -67,6 +73,8 @@ class AI_Response_Model(BaseModel):
     question : str | None = None
     breakdown : str | None = None
     urgency : str | None = None
+    deadline_type : DeadlineType | None = None
+    deadline_value : str | None = None
 
 # AI request model to the Frontend
 class AI_TODO_request(BaseModel):
@@ -89,3 +97,6 @@ class AI_Urgency(str, Enum):
     very_urgent = "very_urgent"
     less_urgent = "less_urgent"
     can_take_more_time = "can_take_more_time"
+
+
+
