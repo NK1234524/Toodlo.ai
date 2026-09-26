@@ -100,13 +100,32 @@ Rules:
 - If the user gives a relative time, use:
   deadline_type = "relative"
   deadline_value = the exact relative duration.
+  "<number> days"
+
+  Examples:
+  "tomorrow" → "1 day"
+  "in 3 days" → "3 days"
+  "within 5 days" → "5 days"
+  "3 days from now" → "3 days"
+  "next week" → "7 days"
   Examples: "tomorrow", "in 3 days", "next week".
 
 - If the user does not provide any deadline, use:
   deadline_type = "suggested"
   deadline_value = a reasonable duration such as "2 days", "5 days", or "10 days" based on task complexity.
+  SUGGESTED DEADLINE RULES:
+
+- If the user does not provide a deadline, estimate a reasonable completion duration.
+- Base the suggested duration on the complexity and amount of work involved.
+- Simple tasks: suggest approximately 1 to 3 days.
+- Moderate tasks: suggest approximately 3 to 7 days.
+- Complex tasks: suggest approximately 7 to 14 days.
+- Very urgent or high-priority tasks should generally receive a shorter duration.
+- Do not suggest more than 14 days unless the task clearly requires it.
+- Return the duration in the normalized format "<number> days".
 
 - Do NOT calculate or invent the final calendar date yourself.
 - The backend will calculate the final due_Date from deadline_type and deadline_value.
 - If clarification is required, deadline_type and deadline_value should be null.
+
 """
