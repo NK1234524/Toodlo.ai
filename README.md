@@ -1,6 +1,10 @@
 # Toodlo.ai
 
-A complete AI assisted product for people of various fields so that they could able to make the todolist in their busy schedule. Toodlo.ai also comprises of proper analysis of priortisation and urgency of the todo task.
+A complete AI assisted product for people of various fields so that they could able to make the todolist in their busy schedule. 
+
+Toodlo.ai comprises of proper analysis of priortisation and urgency of the todo task through which the authenticated user can have a good track record of their high priortised of work. This saves the time of the user & make user more focus over the high priority task.
+
+It also provide the user specific daily planning based on the authenticated user's validated data in the todo.The daily planning is not just done through the data of the user present in the Todo list of the database. This gives users a proper task mangement through which they can manage a lot of task seemlessly without any extra manual hurdle & compromise.
 
 ## Tech Stack
 
