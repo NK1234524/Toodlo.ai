@@ -65,7 +65,20 @@ class DeadlineType(str,Enum):
     explicit = "explicit"
     relative = "relative"
     suggested = "suggested"
+
+
+# AI TodoList model for Daily planning
+class AI_Todo_list(BaseModel):
+    todo_id:int
+    reason:str
+
     
+# AI Daily planning model 
+class AI_Dailyplan(BaseModel):
+    tasks : list[AI_Todo_list]
+
+
+
 # AI RESPONSE model
 class AI_Response_Model(BaseModel):
     action : AI_Action
