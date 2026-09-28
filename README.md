@@ -43,7 +43,7 @@ It also provide the user specific daily planning based on the authenticated user
 - Automatic data creation in DB
 - Instructions against Ambiguous request
 - Instructions given to AI for analysing urgency and priortization of the todo.
-
+- Daily planning of User todos
 
 
 ## API Endpoints
@@ -72,7 +72,8 @@ Toodlo.ai/
                     ├── AI/
                         ├── Instruction/
                                         ├── todo_creation.py
-                        client.py
+                        ├──client.py
+                        ├──deadline.py
                     ├── Db/
                         ├── database.py
                         ├── models.py
