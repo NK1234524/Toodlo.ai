@@ -33,6 +33,13 @@ class AI_Clarification_Pending(Base):
     original_req = Column(String,nullable=False)
     question = Column(String,nullable=False)
 
-
+class DailyPlanning(Base):
+    __tablename__ = "DailyPlanning"
+    id = Column(Integer,primary_key=True,index=True)
+    user_id = Column(Integer,ForeignKey("users.id"),nullable=False)
+    todo_id = Column(Integer,ForeignKey("todos.id"),nullable=False)
+    plan_date = Column(DateTime(timezone=True),nullable=False)
+    reason = Column(String ,nullable=False)
+    
 
 
