@@ -56,6 +56,7 @@ It also provide the user specific daily planning based on the authenticated user
 | POST | `/Toodlo.ai/CreateMyTodo` | Create a Todo |
 | POST | `/Toodlo.ai/AI/CreateMyTodo` | Create a Todo throguh prompt|
 | POST | `/Toodlo.ai/AI/clarifyMyTodo` | Clarify my prompt if it is ambiguous|
+| POST | `/Toodlo.ai/AI/DailyPlan` | Create a Daily plan for the authenticated user's data|
 | GET | `/Toodlo.ai/GetMyTodos` | Get the TODOS of user |
 | PUT | `/Toodlo.ai/UpdateMyTodos/{id}` | Update the Todo in todolist |
 | DELETE | `/Toodlo.ai/DeleteMyTodo/{id}` | Delete the Todo in todolist |
