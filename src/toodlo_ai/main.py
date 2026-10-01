@@ -204,7 +204,16 @@ async def AI_Todo_clarification(request_model : AI_TODO_Clarification_request,
         return new_todo
     return response.parsed
 
-
+# Daily planning of user from todo 
+@app.post("/Toodlo.ai/AI/CreateDailyPlan")
+async def Create_Daily_Plan(
+    db:Session=Depends(get_db),
+    current_user:models.User=Depends(get_current_user)
+):
+    todos = db.query(models.Todo).filter(
+        models.Todo.user_id == current_user.id,
+        models.Todo.status != "completed"
+    ).all()
 
 
 # Get the Todos
