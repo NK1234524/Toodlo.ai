@@ -23,7 +23,8 @@ from .Schemas.schema import(
     AI_Response_Model,
     AI_TODO_request,
     AI_TODO_Clarification_request,
-    AI_Action
+    AI_Action,
+    AI_Dailyplan
 )
 
 
@@ -214,6 +215,32 @@ async def Create_Daily_Plan(
         models.Todo.user_id == current_user.id,
         models.Todo.status != "completed"
     ).all()
+    context = f'''
+    Current_Date :{date.today()}
+    User's incomplete Todos :
+    {
+         [
+            {
+            "id" : todo.id,
+            "title" : todo.title,
+            "description" : todo.description,
+            "priority" : todo.priority,
+            "urgency" : todo.urgency,
+            "due_Date" : todo.due_Date
+            }
+        for todo in todos
+        ]
+    }
+    '''
+    response = client.models.generate_content(
+            model = "gemini-3.6-flash",
+            contents = context,
+            config = {
+                "system_instruction":TODO_CREATION_INSTRUCTION,
+                "response_mime_type":"application/json",
+                "response_schema":AI_Dailyplan
+            }
+        )
 
 
 # Get the Todos
