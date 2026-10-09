@@ -1,10 +1,15 @@
 # Toodlo.ai
+An AI powered SAAS project
 
-A complete AI assisted product for people of various fields so that they could able to make the todolist in their busy schedule. 
+A complete AI assisted Todo app for people of various fields so that they could able to make the todolist in their busy schedule. 
 
 Toodlo.ai comprises of proper analysis of priortisation and urgency of the todo task through which the authenticated user can have a good track record of their high priortised of work. This saves the time of the user & make user more focus over the high priority task.
 
 It also provide the user specific daily planning based on the authenticated user's validated data in the todo.The daily planning is not just done through the data of the user present in the Todo list of the database. This gives users a proper task mangement through which they can manage a lot of task seemlessly without any extra manual hurdle & compromise.
+
+Adaptive replanning feature is something very significant feature in this app. This will help the user's to remove that cumbersome process of replanning the todo's task daily manually. AI(Gemini) will on their own handle all the todo's daily planning in such a way so that the user will get the todo's in the daily plan of the very next in their particular timezone inclusive of that tasks also which are not having  completed status in the last day Daily planning. This will make the  daily planning of everyday well replanned and able to make the user's cumbersome work so light.
+
+
 
 ## Tech Stack
 
@@ -21,7 +26,7 @@ It also provide the user specific daily planning based on the authenticated user
 - Authentication & Authorization
 - AI agent
 - Gemini API key
-- AI analysis after the Todo creation through prompt.
+
 
 
 
@@ -43,7 +48,7 @@ It also provide the user specific daily planning based on the authenticated user
 - Automatic data creation in DB
 - Instructions against Ambiguous request
 - Instructions given to AI for analysing urgency and priortization of the todo.
-- Daily planning of User todos
+- Daily planning of User's todos
 
 
 ## API Endpoints
