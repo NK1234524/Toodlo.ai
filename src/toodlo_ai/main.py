@@ -15,6 +15,7 @@ from .Auth.security_key import create_access_token,ACCESS_TOKEN_EXPIRE_MINUTES,g
 from .AI.client import client
 from .AI.deadline import calculate_due_date
 from toodlo_ai.AI.Instruction.todo_creation_instruction import TODO_CREATION_INSTRUCTION
+from datetime import datetime, timedelta
 from .Schemas.schema import(
     TODO,
     TODOResponse,    
@@ -241,6 +242,37 @@ async def Create_Daily_Plan(
                 "response_schema":AI_Dailyplan
             }
         )
+    daily_plan = response.parsed
+    if daily_plan is None :
+        raise HTTPException(
+            status_code=502,
+            detail="AI failed to generate a valid daily plan"
+        )
+    valid_todo_id = {todo.id for todo in todos}
+    for task in daily_plan.tasks:
+        if task.todo_id not in valid_todo_id:
+            raise HTTPException(
+            status_code=502,
+            detail = "AI returned the wrong todo ."
+        )
+    for task in daily_plan.tasks:
+        # print("Saving Data:",task.todo_id)
+        daily_plan_record = models.DailyPlanning(
+            user_id = current_user.id,
+            todo_id = task.todo_id,
+            plan_date = datetime.now().astimezone().replace(
+                hour =0, minute=0, second=0, microsecond=0
+            ),
+            reason = task.reason
+        )
+    
+        db.add(daily_plan_record)
+    # print("Pending:",len(db.new))
+    # print("task_returned:",len(daily_plan.tasks))
+    
+    db.commit()
+    # print("Commit Successful")
+    return daily_plan
 
 
 # Get the Todos
