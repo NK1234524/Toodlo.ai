@@ -49,6 +49,7 @@ Adaptive replanning feature is something very significant feature in this app. T
 - Instructions against Ambiguous request
 - Instructions given to AI for analysing urgency and priortization of the todo.
 - Daily planning of User's todos
+- Adaptive replanning of tasks by Gemini
 
 
 ## API Endpoints
@@ -62,6 +63,7 @@ Adaptive replanning feature is something very significant feature in this app. T
 | POST | `/Toodlo.ai/AI/CreateMyTodo` | Create a Todo throguh prompt|
 | POST | `/Toodlo.ai/AI/clarifyMyTodo` | Clarify my prompt if it is ambiguous|
 | POST | `/Toodlo.ai/AI/DailyPlan` | Create a Daily plan for the authenticated user's data|
+| POST | `/Toodlo.ai/AI/Adaptive Replanning` | Adaptive Replanning of tasks |
 | GET | `/Toodlo.ai/GetMyTodos` | Get the TODOS of user |
 | PUT | `/Toodlo.ai/UpdateMyTodos/{id}` | Update the Todo in todolist |
 | DELETE | `/Toodlo.ai/DeleteMyTodo/{id}` | Delete the Todo in todolist |
@@ -78,6 +80,7 @@ Toodlo.ai/
                     ├── AI/
                         ├── Instruction/
                                         ├── todo_creation.py
+                                        ├── Daily_Planning_instruction.py
                         ├──client.py
                         ├──deadline.py
                     ├── Db/
