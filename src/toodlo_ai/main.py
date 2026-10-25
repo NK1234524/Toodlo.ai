@@ -281,6 +281,47 @@ async def Adaptive_Replan(
     db:Session = Depends(get_db),
     current_user:models.User = Depends(get_current_user)
 ):
+
+    # This will help to remove the duplicate ones
+
+    today = date.today()
+    existing_plan = db.query(models.DailyPlanning).filter(
+        models.DailyPlanning.user_id == current_user.id,
+        models.DailyPlanning.plan_date >= datetime.combine(
+            today,
+            datetime.min.time()
+        ).astimezone(),
+        models.DailyPlanning.plan_date <datetime.combine(
+            today + timedelta(days=1),
+            datetime.min.time()
+        ).astimezone()
+    ).all()
+
+    if existing_plan:
+        tasks = []
+
+    for plan in existing_plan:
+        todo = db.query(models.Todo).filter(
+            models.Todo.id == plan.todo_id,
+            models.Todo.user_id == current_user.id
+        ).first()
+
+        if todo:
+            tasks.append({
+                "todo_id": todo.id,
+                "title": todo.title,
+                "status": todo.status,
+                "priority": todo.priority,
+                "due_date": todo.due_Date,
+                "reason": plan.reason
+            })
+
+    return {
+        "message": "Today's adaptive plan already exists",
+        "tasks": tasks
+    }
+
+    
     yesterday = date.today() - timedelta(days =1)
     yesterday_plan = db.query(models.DailyPlanning).filter(
         models.DailyPlanning.user_id == current_user.id,
@@ -355,6 +396,37 @@ async def Adaptive_Replan(
             status_code = 502,
             detail  = "AI failed to generate a valid daily plan"
         )
+
+    valid_todo_ids = {todo["id"] for todo in candidate_tasks}
+    returned_ids = [task.todo_id for task in daily_plan.tasks]
+    
+    # For removal of Duplicate data present in the Todo table :- 
+    
+    if len(returned_ids) != len(set(returned_ids)):
+        raise HTTPException(
+            status_code = "502",
+            detail = "AI returned duplicated output"
+        )
+
+    if not set(returned_ids).issubset(valid_todo_ids):
+        raise HTTPException(
+            status_code = "502",
+            detail = "AI returned an inelligible TODO ID"
+        )
+    # After adaptive replanning the data is inserted into the DB.
+    today = date.today()
+    for task in daily_plan.tasks:
+        daily_plan_record = models.DailyPlanning(
+            user_id = current_user.id,
+            todo_id = task.todo_id,
+            plan_date = datetime.combine(
+                today,
+                datetime.min.time()
+            ).astimezone(),
+            reason  = task.reason
+        )
+        db.add(daily_plan_record)
+    db.commit()
     return daily_plan   
 
    
