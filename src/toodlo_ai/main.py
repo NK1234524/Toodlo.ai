@@ -316,10 +316,7 @@ async def Adaptive_Replan(
                 "reason": plan.reason
             })
 
-    return {
-        "message": "Today's adaptive plan already exists",
-        "tasks": tasks
-    }
+    
 
     
     yesterday = date.today() - timedelta(days =1)
@@ -427,6 +424,10 @@ async def Adaptive_Replan(
         )
         db.add(daily_plan_record)
     db.commit()
+    # return {
+    #         "message": "Today's adaptive plan already exists",
+    #         "tasks": tasks
+    #     }
     return daily_plan   
 
    
