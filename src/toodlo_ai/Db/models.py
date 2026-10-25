@@ -39,7 +39,6 @@ class DailyPlanning(Base):
     user_id = Column(Integer,ForeignKey("users.id"),nullable=False)
     todo_id = Column(Integer,ForeignKey("todos.id"),nullable=False)
     plan_date = Column(DateTime(timezone=True),nullable=False)
-    reason = Column(String ,nullable=False)
-    
+    reason = Column(String ,nullable=False)   
 
 
