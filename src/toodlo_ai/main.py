@@ -274,7 +274,91 @@ async def Create_Daily_Plan(
     # print("Commit Successful")
     return daily_plan
 
+# Adaptive Replanning
+@app.post("/Toolo.ai/AI/AdaptiveReplan")
+async def Adaptive_Replan(
+    db:Session = Depends(get_db),
+    current_user:models.User = Depends(get_current_user)
+):
+    yesterday = date.today() - timedelta(days =1)
+    yesterday_plan = db.query(models.DailyPlanning).filter(
+        models.DailyPlanning.user_id == current_user.id,
+        models.DailyPlanning.plan_date >=datetime.combine(
+            yesterday,
+            datetime.min.time()
+        )
+    ).all()
+    
+    unfinished_task = []
+    for plan in yesterday_plan:
+            todo = db.query(models.Todo).filter(
+                models.Todo.id == plan.todo_id,
+                models.Todo.user_id == current_user.id,
+                models.Todo.status !="completed"
+            ).first()
+            if todo:
+                unfinished_task.append(todo)
+   
+    
+    carried_forward_ids = {
+    todo.id for todo in unfinished_task
+    }
 
+    additional_Task = db.query(models.Todo).filter(
+        models.Todo.user_id == current_user.id,
+        models.Todo.status !="completed",
+        ~models.Todo.id.in_(carried_forward_ids)
+    ).all()
+
+    candidate_tasks = []
+
+    for todo in unfinished_task:
+        candidate_tasks.append({
+            "id":todo.id,
+            "titile":todo.title,
+            "description":todo.description,
+            "priority":todo.priority,
+            "urgency":todo.urgency,
+            "due_date":todo.due_Date,
+            "is_Carry_forward":True
+        })
+
+    for todo in additional_Task:
+        candidate_tasks.append({
+            "id":todo.id,
+            "titile":todo.title,
+            "description":todo.description,
+            "priority":todo.priority,
+            "urgency":todo.urgency,
+            "due_date":todo.due_Date,
+            "is_Carry_forward":False
+        })
+
+    return {
+        "yesterday_plan_count": len(yesterday_plan),
+        "unfinished_tasks": [
+            {
+                "id": todo.id,
+                "title": todo.title,
+                "status": todo.status
+            }
+            for todo in unfinished_task
+        ],
+        "carried_forward_ids": list(carried_forward_ids),
+        "additional task":[
+            {
+                "id":todo.id,
+                "title":todo.title,
+                "status":todo.status
+            }
+            for todo in additional_Task
+        ],
+        "Candidates":len(candidate_tasks),
+        "Candidates_tasks":candidate_tasks
+    }
+
+   
+    
 # Get the Todos
 @app.get("/Toodlo.ai/GetMyTodos",response_model=list[TODOResponse])
 async def get_todo(q:Annotated[str | None, Query(min_length=2,max_length=50)]= None,
