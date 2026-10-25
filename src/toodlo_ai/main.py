@@ -15,6 +15,7 @@ from .Auth.security_key import create_access_token,ACCESS_TOKEN_EXPIRE_MINUTES,g
 from .AI.client import client
 from .AI.deadline import calculate_due_date
 from toodlo_ai.AI.Instruction.todo_creation_instruction import TODO_CREATION_INSTRUCTION
+from toodlo_ai.AI.Instruction.Daily_Planning_instruction import DAILY_PLANNING_INSTRUCTION
 from datetime import datetime, timedelta
 from .Schemas.schema import(
     TODO,
@@ -237,7 +238,7 @@ async def Create_Daily_Plan(
             model = "gemini-3.6-flash",
             contents = context,
             config = {
-                "system_instruction":TODO_CREATION_INSTRUCTION,
+                "system_instruction":DAILY_PLANNING_INSTRUCTION,
                 "response_mime_type":"application/json",
                 "response_schema":AI_Dailyplan
             }
@@ -334,28 +335,27 @@ async def Adaptive_Replan(
             "is_Carry_forward":False
         })
 
-    return {
-        "yesterday_plan_count": len(yesterday_plan),
-        "unfinished_tasks": [
-            {
-                "id": todo.id,
-                "title": todo.title,
-                "status": todo.status
-            }
-            for todo in unfinished_task
-        ],
-        "carried_forward_ids": list(carried_forward_ids),
-        "additional task":[
-            {
-                "id":todo.id,
-                "title":todo.title,
-                "status":todo.status
-            }
-            for todo in additional_Task
-        ],
-        "Candidates":len(candidate_tasks),
-        "Candidates_tasks":candidate_tasks
+    context = {
+        "current date" : date.today().isoformat(),
+        "candidate_tasks":candidate_tasks
     }
+    response = client.models.generate_content(
+        model = "gemini-3.6-flash",
+        contents = str(context),
+        config = {
+            "system_instruction":DAILY_PLANNING_INSTRUCTION,
+            "response_mime_type":"application/json",
+            "response_schema":AI_Dailyplan
+        }
+    )
+    daily_plan = response.parsed
+
+    if daily_plan is None :
+        raise HTTPException(
+            status_code = 502,
+            detail  = "AI failed to generate a valid daily plan"
+        )
+    return daily_plan   
 
    
     
