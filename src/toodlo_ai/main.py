@@ -33,7 +33,11 @@ from .Schemas.schema import(
 pwd_hash = PasswordHash.recommended()
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI() 
+app = FastAPI(
+    title="Toodlo.ai",
+    description="An AI powered Task management system",
+    version="0.1.0" # early development version
+) 
 
 
 #root
